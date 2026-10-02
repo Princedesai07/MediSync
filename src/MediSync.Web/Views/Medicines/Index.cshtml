@@ -1,0 +1,37 @@
+@model IEnumerable<Medicine>
+@{ ViewData["Title"] = "Medicine Inventory"; }
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div><span class="eyebrow">PHARMACY INVENTORY</span><h1 class="mb-1">Medicine Inventory</h1><p class="text-muted mb-0">Manage medicine availability, stock levels and expiry information.</p></div>
+    <a class="btn btn-primary" asp-action="Create">Add Medicine</a>
+</div>
+@if(TempData["Message"] is string message){<div class="alert alert-success">@message</div>}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-label">Total Medicines</div><div class="stat-value">@ViewBag.TotalCount</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-value">@ViewBag.LowStockCount</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-label">Expiring in 30 Days</div><div class="stat-value">@ViewBag.ExpiringSoonCount</div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-label">Expired</div><div class="stat-value">@ViewBag.ExpiredCount</div></div></div>
+</div>
+<div class="form-card mb-4">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-7"><label class="form-label">Search medicine</label><input name="q" value="@ViewBag.Query" class="form-control" placeholder="Name, category or manufacturer" /></div>
+        <div class="col-md-3"><div class="form-check mt-4"><input class="form-check-input" type="checkbox" name="lowStock" value="true" id="lowStock" @(ViewBag.LowStock == true ? "checked" : "") /><label class="form-check-label" for="lowStock">Show low stock only</label></div></div>
+        <div class="col-md-2 d-flex gap-2"><button class="btn btn-primary flex-fill">Filter</button><a class="btn btn-outline-secondary" asp-action="Index">Reset</a></div>
+    </form>
+</div>
+<div class="table-card"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Medicine</th><th>Category</th><th>Manufacturer</th><th>Stock</th><th>Expiry</th><th>Price</th><th></th></tr></thead><tbody>
+@foreach(var m in Model){
+    var low = m.StockQuantity <= m.LowStockThreshold;
+    var expired = m.ExpiryDate.Date < DateTime.Today;
+    var expiringSoon = !expired && m.ExpiryDate.Date <= DateTime.Today.AddDays(30);
+    <tr>
+        <td><strong>@m.Name</strong>@if(!string.IsNullOrWhiteSpace(m.Description)){<div class="text-muted small">@m.Description</div>}</td>
+        <td>@(string.IsNullOrWhiteSpace(m.Category) ? "—" : m.Category)</td>
+        <td>@(string.IsNullOrWhiteSpace(m.Manufacturer) ? "—" : m.Manufacturer)</td>
+        <td><span class="badge @(low ? "text-bg-danger" : "text-bg-success")">@m.StockQuantity</span>@if(low){<div class="small text-danger mt-1">Low stock</div>}</td>
+        <td><span class="badge @(expired ? "text-bg-danger" : expiringSoon ? "text-bg-warning" : "text-bg-success")">@m.ExpiryDate.ToString("dd MMM yyyy")</span>@if(expired){<div class="small text-danger mt-1">Expired</div>}else if(expiringSoon){<div class="small text-warning-emphasis mt-1">Expiring soon</div>}</td>
+        <td>₹@m.Price.ToString("0.00")</td>
+        <td><a asp-action="Edit" asp-route-id="@m.Id">Edit</a></td>
+    </tr>
+}
+@if(!Model.Any()){<tr><td colspan="7" class="text-center text-muted py-4">No medicines match the selected filters.</td></tr>}
+</tbody></table></div></div>

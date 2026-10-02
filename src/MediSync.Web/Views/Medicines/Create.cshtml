@@ -1,0 +1,3 @@
+@model Medicine
+@{ ViewData["Title"] = "Add Medicine"; }
+<h1>Add Medicine</h1><form asp-action="Create" method="post" class="form-card">@await Html.PartialAsync("_MedicineForm")<button class="btn btn-primary">Save Medicine</button></form>

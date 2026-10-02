@@ -1,0 +1,4 @@
+@model DoctorManagementViewModel
+@{ ViewData["Title"] = "Add Doctor"; }
+<div class="mb-4"><span class="eyebrow">ADMIN · CLINICAL STAFF</span><h1>Add Doctor</h1><p class="text-muted">Create the doctor's clinical profile and login account together.</p></div>
+<form asp-action="Create" method="post" class="form-card">@await Html.PartialAsync("_DoctorForm")<div class="mt-4 d-flex gap-2"><button class="btn btn-primary">Create Doctor</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form>

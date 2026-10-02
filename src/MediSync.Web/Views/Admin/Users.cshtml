@@ -1,0 +1,38 @@
+@model AdminUsersViewModel
+@{ ViewData["Title"] = "User Management"; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div><span class="eyebrow">ADMINISTRATION</span><h1 class="mb-1">User Management</h1><p class="text-muted mb-0">Search staff and patient accounts, review their roles, and control access.</p></div>
+    <div class="d-flex gap-2"><a class="btn btn-primary" asp-controller="Doctors" asp-action="Create">+ Add Doctor</a><a class="btn btn-outline-primary" asp-controller="Patients" asp-action="Create">+ Add Patient</a></div>
+</div>
+
+<form method="get" class="form-card mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-lg-5"><label class="form-label">Search</label><input name="search" value="@Model.Search" class="form-control" placeholder="Name or email" /></div>
+        <div class="col-md-3"><label class="form-label">Role</label><select name="role" class="form-select"><option value="">All roles</option>@foreach(var r in new[]{"Admin","Doctor","Receptionist","Laboratory","Pharmacist","Patient"}){<option value="@r" selected="@(Model.Role == r ? "selected" : null)">@r</option>}</select></div>
+        <div class="col-md-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="">All statuses</option><option value="active" selected="@(Model.Status == "active" ? "selected" : null)">Active</option><option value="inactive" selected="@(Model.Status == "inactive" ? "selected" : null)">Inactive</option></select></div>
+        <div class="col-md-1"><button class="btn btn-primary w-100">Go</button></div>
+    </div>
+</form>
+
+<div class="table-card"><table class="table table-hover align-middle mb-0"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Profile</th><th>Status</th><th>Created</th><th class="text-end">Action</th></tr></thead><tbody>
+@foreach(var row in Model.Users)
+{
+    <tr>
+        <td><strong>@row.User.FullName</strong></td><td>@row.User.Email</td>
+        <td><span class="badge text-bg-light">@row.Role</span></td><td>@(row.ProfileType ?? "—")</td>
+        <td><span class="badge @(row.IsActive ? "text-bg-success" : "text-bg-secondary")">@(row.IsActive ? "Active" : "Inactive")</span></td>
+        <td>@row.User.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+        <td class="text-end">
+            @if(row.User.Id != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+            {
+                <form asp-action="ToggleUserStatus" method="post" class="d-inline"><input type="hidden" name="id" value="@row.User.Id" /><button class="btn btn-sm btn-outline-secondary">@(row.IsActive ? "Deactivate" : "Activate")</button></form>
+                @if(row.Role != "Doctor" && row.Role != "Patient")
+                { <form asp-action="DeleteUser" method="post" class="d-inline ms-1" onsubmit="return confirm('Delete this account?');"><input type="hidden" name="id" value="@row.User.Id" /><button class="btn btn-sm btn-outline-danger">Delete</button></form> }
+            }
+            else { <span class="text-muted small">Current account</span> }
+        </td>
+    </tr>
+}
+@if(!Model.Users.Any()){<tr><td colspan="7" class="text-center py-5 text-muted">No users match your filters.</td></tr>}
+</tbody></table></div>

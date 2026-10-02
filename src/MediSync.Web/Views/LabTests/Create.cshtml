@@ -1,0 +1,21 @@
+@model LabTestCreateViewModel
+@{ ViewData["Title"] = "Request Lab Test"; }
+<div class="mb-3"><h1>Request Laboratory Test</h1><p class="text-muted">Create a lab request from the patient's medical record.</p></div>
+<form asp-action="Create" method="post" class="form-card">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="MedicalRecordId" class="form-label">Medical Record</label>
+        <select asp-for="MedicalRecordId" asp-items="Model.MedicalRecords" class="form-select">
+            <option value="">Select medical record</option>
+        </select>
+        <div class="form-text">The patient and doctor are taken from this record.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3"><label class="form-label">Patient</label><select class="form-select" disabled><option>@(Model.PatientId > 0 ? Model.Patients.FirstOrDefault(x => x.Value == Model.PatientId.ToString())?.Text ?? "Selected from record" : "Select a medical record")</option></select></div>
+        <div class="col-md-6 mb-3"><label class="form-label">Doctor</label><select class="form-select" disabled><option>@(Model.DoctorId > 0 ? Model.Doctors.FirstOrDefault(x => x.Value == Model.DoctorId.ToString())?.Text ?? "Selected from record" : "Select a medical record")</option></select></div>
+    </div>
+    <div class="mb-3"><label asp-for="TestName" class="form-label">Test Name</label><input asp-for="TestName" class="form-control" placeholder="CBC, Lipid Profile, Blood Sugar..." /><span asp-validation-for="TestName" class="text-danger"></span></div>
+    <div class="mb-3"><label asp-for="Notes" class="form-label">Clinical Notes</label><textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any instructions for the laboratory"></textarea></div>
+    <button class="btn btn-primary">Request Test</button> <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,97 @@
+@model Patient
+@{
+    ViewData["Title"] = "My Medical History";
+    var appointments = Model.Appointments.OrderByDescending(a => a.AppointmentDate).ToList();
+    var records = Model.MedicalRecords.OrderByDescending(r => r.VisitDate).ToList();
+    var labs = Model.LabTests.OrderByDescending(l => l.RequestedDate).ToList();
+    var prescriptions = Model.Prescriptions.OrderByDescending(p => p.CreatedDate).ToList();
+}
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+        <span class="eyebrow">MY HEALTHCARE HISTORY</span>
+        <h1 class="mb-1">@Model.FullName</h1>
+        <p class="text-muted mb-0">Your appointments, consultations, laboratory results and prescriptions in one place.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        <a class="btn btn-primary" asp-controller="Appointments" asp-action="Create">Book Appointment</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Appointments</div><div class="stat-value">@appointments.Count</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Medical Records</div><div class="stat-value">@records.Count</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Lab Tests</div><div class="stat-value">@labs.Count</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Prescriptions</div><div class="stat-value">@prescriptions.Count</div></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="form-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="section-label">VISITS</span><h3 class="mb-0 mt-1">Appointments</h3></div>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="Appointments" asp-action="Index">View all</a>
+            </div>
+            @if (!appointments.Any()) { <p class="text-muted mb-0">No appointments yet.</p> }
+            @foreach (var a in appointments.Take(10)) {
+                <div class="timeline-row">
+                    <div><strong>@a.AppointmentDate.ToString("dd MMM yyyy")</strong><div class="small text-muted">@a.AppointmentDate.ToString("HH:mm") · @a.Doctor.FullName</div></div>
+                    <span class="badge bg-secondary">@a.Status</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="form-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="section-label">CONSULTATIONS</span><h3 class="mb-0 mt-1">Medical Records</h3></div>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="MedicalRecords" asp-action="Index">View all</a>
+            </div>
+            @if (!records.Any()) { <p class="text-muted mb-0">No medical records yet.</p> }
+            @foreach (var r in records.Take(10)) {
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between gap-2"><strong>@r.VisitDate.ToString("dd MMM yyyy")</strong><span class="small text-muted">@r.Doctor.FullName</span></div>
+                    <div class="mt-2"><strong>Diagnosis:</strong> @(string.IsNullOrWhiteSpace(r.Diagnosis) ? "—" : r.Diagnosis)</div>
+                    <div><strong>Symptoms:</strong> @(string.IsNullOrWhiteSpace(r.Symptoms) ? "—" : r.Symptoms)</div>
+                    @if (!string.IsNullOrWhiteSpace(r.FollowUpInstructions)) { <div class="small text-muted mt-2"><strong>Follow-up:</strong> @r.FollowUpInstructions</div> }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="form-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="section-label">DIAGNOSTICS</span><h3 class="mb-0 mt-1">Laboratory Results</h3></div>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="LabTests" asp-action="Index">View all</a>
+            </div>
+            @if (!labs.Any()) { <p class="text-muted mb-0">No laboratory tests yet.</p> }
+            @foreach (var l in labs.Take(10)) {
+                <div class="timeline-row">
+                    <div><strong>@l.TestName</strong><div class="small text-muted">Requested @l.RequestedDate.ToString("dd MMM yyyy") · @l.Doctor.FullName</div></div>
+                    <div class="text-end"><span class="badge bg-@(l.Status == LabTestStatus.Completed ? "success" : l.Status == LabTestStatus.InProgress ? "warning text-dark" : "secondary")">@l.Status</span>@if (l.Status == LabTestStatus.Completed && !string.IsNullOrWhiteSpace(l.Result)) { <div class="small mt-1">@l.Result</div> }</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="form-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="section-label">TREATMENT</span><h3 class="mb-0 mt-1">Prescriptions</h3></div>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="Prescriptions" asp-action="Index">View all</a>
+            </div>
+            @if (!prescriptions.Any()) { <p class="text-muted mb-0">No prescriptions yet.</p> }
+            @foreach (var p in prescriptions.Take(10)) {
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between gap-2"><strong>#@p.Id · @p.CreatedDate.ToString("dd MMM yyyy")</strong><span class="badge bg-@(p.Status == PrescriptionStatus.Dispensed ? "success" : p.Status == PrescriptionStatus.Processing ? "warning text-dark" : "secondary")">@p.Status</span></div>
+                    <div class="small text-muted mt-1">@p.Doctor.FullName</div>
+                    @foreach (var i in p.Items) { <div class="small mt-2"><strong>@i.Medicine.Name</strong> — @i.Dosage · @i.Frequency · @i.Duration · Qty @i.Quantity</div> }
+                    @if (!string.IsNullOrWhiteSpace(p.Instructions)) { <div class="small text-muted mt-2">@p.Instructions</div> }
+                </div>
+            }
+        </div>
+    </div>
+</div>

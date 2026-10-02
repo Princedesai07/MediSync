@@ -1,0 +1,4 @@
+@model PatientManagementViewModel
+@{ ViewData["Title"] = "Register Patient"; }
+<div class="mb-4"><span class="eyebrow">ADMIN · PATIENT REGISTRY</span><h1>Register Patient</h1><p class="text-muted">Create the patient record and patient portal account together.</p></div>
+<form asp-action="Create" method="post" class="form-card">@await Html.PartialAsync("_PatientForm")<div class="mt-4 d-flex gap-2"><button class="btn btn-primary">Register Patient</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form>

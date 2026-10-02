@@ -1,0 +1,13 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Admin Dashboard"; }
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div><span class="eyebrow">SYSTEM OVERVIEW</span><h1 class="mb-1">Admin Dashboard</h1><p class="text-muted mb-0">A central view of MediSync operations and pending activities.</p></div>
+    <div class="d-flex gap-2"><a class="btn btn-primary" asp-controller="Patients" asp-action="Create">Register Patient</a><a class="btn btn-outline-primary" asp-controller="Admin" asp-action="Users">Manage Users</a></div>
+</div>
+<div class="row g-3 mb-4">
+@foreach(var card in new[]{("Patients",Model.TotalPatients),("Doctors",Model.TotalDoctors),("Today's Appointments",Model.TodaysAppointments),("Pending Appointments",Model.PendingAppointments),("Pending Lab Tests",Model.PendingLabTests),("Medicines",Model.TotalMedicines),("Low Stock",Model.LowStockMedicines),("Completed Visits",Model.CompletedAppointments)}){<div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-label">@card.Item1</div><div class="stat-value">@card.Item2</div></div></div>}
+</div>
+<div class="row g-4">
+<div class="col-lg-7"><div class="form-card h-100"><div class="section-label">SYSTEM WORKSPACE</div><h3 class="mt-1">Quick Access</h3><div class="d-grid gap-2 mt-3"><a class="quick-link" asp-controller="Appointments" asp-action="Index"><span>Appointments & workflow</span><span>→</span></a><a class="quick-link" asp-controller="LabTests" asp-action="Index"><span>Laboratory requests</span><span>→</span></a><a class="quick-link" asp-controller="Prescriptions" asp-action="Index"><span>Prescription queue</span><span>→</span></a><a class="quick-link" asp-controller="Medicines" asp-action="Index"><span>Medicine inventory</span><span>→</span></a></div></div></div>
+<div class="col-lg-5"><div class="form-card h-100"><div class="section-label">SYSTEM DATA</div><h3 class="mt-1">Clinical Records</h3><div class="row g-3 mt-1"><div class="col-6"><div class="profile-field"><span>Medical Records</span><strong>@Model.TotalMedicalRecords</strong></div></div><div class="col-6"><div class="profile-field"><span>Prescriptions</span><strong>@Model.TotalPrescriptions</strong></div></div><div class="col-6"><div class="profile-field"><span>Pending Prescriptions</span><strong>@Model.PendingPrescriptions</strong></div></div><div class="col-6"><div class="profile-field"><span>Expired Medicines</span><strong>@Model.ExpiredMedicines</strong></div></div></div></div></div>
+</div>

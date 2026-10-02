@@ -1,0 +1,9 @@
+@model DoctorManagementViewModel
+<input asp-for="Id" type="hidden" /><input asp-for="ApplicationUserId" type="hidden" />
+<div asp-validation-summary="All" class="alert alert-danger"></div>
+<div class="section-label mb-3">Doctor profile</div>
+<div class="row"><div class="col-md-6 mb-3"><label asp-for="FirstName" class="form-label"></label><input asp-for="FirstName" class="form-control" /></div><div class="col-md-6 mb-3"><label asp-for="LastName" class="form-label"></label><input asp-for="LastName" class="form-control" /></div></div>
+<div class="row"><div class="col-md-6 mb-3"><label asp-for="Specialization" class="form-label"></label><input asp-for="Specialization" class="form-control" placeholder="e.g. Cardiology" /></div><div class="col-md-6 mb-3"><label asp-for="Department" class="form-label"></label><input asp-for="Department" class="form-control" placeholder="e.g. Outpatient" /></div></div>
+<div class="row"><div class="col-md-6 mb-3"><label asp-for="Phone" class="form-label"></label><input asp-for="Phone" class="form-control" /></div><div class="col-md-6 mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" type="email" /></div></div>
+<div class="mb-3"><label asp-for="Availability" class="form-label"></label><input asp-for="Availability" class="form-control" placeholder="Mon-Fri 09:00-14:00" /></div>
+@if(Model.Id == 0){<div class="account-box mt-4"><div class="section-label">Login account</div><p class="text-muted small">The email above becomes the doctor's login ID. Set a temporary password and share it securely with the doctor.</p><label asp-for="AccountPassword" class="form-label"></label><input asp-for="AccountPassword" class="form-control" placeholder="At least 8 characters" /><span asp-validation-for="AccountPassword" class="text-danger small"></span></div>}

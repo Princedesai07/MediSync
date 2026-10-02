@@ -1,0 +1,45 @@
+name: Deploy MediSync to Azure App Service
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: medisync-production
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: 10.0.x
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore MediSync.sln
+
+      - name: Build
+        run: dotnet build MediSync.sln --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish src/MediSync.Web/MediSync.Web.csproj --configuration Release --no-restore --output ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish

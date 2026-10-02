@@ -1,0 +1,95 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var displayRole = User.IsInRole("Admin") ? "Administrator" : User.IsInRole("Doctor") ? "Doctor" : User.IsInRole("Receptionist") ? "Receptionist" : User.IsInRole("Laboratory") ? "Laboratory" : User.IsInRole("Pharmacist") ? "Pharmacist" : User.IsInRole("Patient") ? "Patient" : "User";
+}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d6e8a" />
+    <title>MediSync - @ViewData["Title"]</title>
+    <script>
+        (function () {
+            const saved = localStorage.getItem('medisync-theme');
+            const theme = saved === 'dark' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header>
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+<div class="container-fluid px-3 px-lg-4">
+<a class="navbar-brand fw-bold me-3" asp-controller="Dashboard" asp-action="Index">MediSync</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="nav">
+@if (User.Identity?.IsAuthenticated == true)
+{
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+<li class="nav-item"><a class="nav-link @(currentController == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+@if(User.IsInRole("Admin")){<li class="nav-item"><a class="nav-link @(currentController == "Patients" ? "active" : "")" asp-controller="Patients" asp-action="Index">Patients</a></li><li class="nav-item"><a class="nav-link @(currentController == "Doctors" ? "active" : "")" asp-controller="Doctors" asp-action="Index">Doctors</a></li>}
+@if(User.IsInRole("Doctor")){<li class="nav-item"><a class="nav-link @(currentController == "Appointments" ? "active" : "")" asp-controller="Appointments" asp-action="Index">Appointments</a></li><li class="nav-item"><a class="nav-link @(currentController == "Patients" ? "active" : "")" asp-controller="Patients" asp-action="Index">Patients</a></li><li class="nav-item"><a class="nav-link @(currentController == "MedicalRecords" ? "active" : "")" asp-controller="MedicalRecords" asp-action="Index">Medical Records</a></li><li class="nav-item"><a class="nav-link @(currentController == "LabTests" ? "active" : "")" asp-controller="LabTests" asp-action="Index">Laboratory</a></li><li class="nav-item"><a class="nav-link @(currentController == "Prescriptions" ? "active" : "")" asp-controller="Prescriptions" asp-action="Index">Prescriptions</a></li>}
+@if(User.IsInRole("Receptionist")){<li class="nav-item"><a class="nav-link @(currentController == "Patients" ? "active" : "")" asp-controller="Patients" asp-action="Index">Patients</a></li><li class="nav-item"><a class="nav-link @(currentController == "Appointments" ? "active" : "")" asp-controller="Appointments" asp-action="Index">Appointments</a></li>}
+@if(User.IsInRole("Laboratory")){<li class="nav-item"><a class="nav-link @(currentController == "LabTests" ? "active" : "")" asp-controller="LabTests" asp-action="Index">Laboratory Tests / Results</a></li>}
+@if(User.IsInRole("Pharmacist")){<li class="nav-item"><a class="nav-link @(currentController == "Prescriptions" ? "active" : "")" asp-controller="Prescriptions" asp-action="Index">Prescriptions</a></li><li class="nav-item"><a class="nav-link @(currentController == "Medicines" ? "active" : "")" asp-controller="Medicines" asp-action="Index">Medicines / Stock</a></li>}
+@if(User.IsInRole("Admin")){<li class="nav-item"><a class="nav-link @(currentController == "Appointments" ? "active" : "")" asp-controller="Appointments" asp-action="Index">Appointments</a></li><li class="nav-item"><a class="nav-link @(currentController == "MedicalRecords" ? "active" : "")" asp-controller="MedicalRecords" asp-action="Index">Medical Records</a></li><li class="nav-item"><a class="nav-link @(currentController == "LabTests" ? "active" : "")" asp-controller="LabTests" asp-action="Index">Laboratory</a></li><li class="nav-item"><a class="nav-link @(currentController == "Prescriptions" ? "active" : "")" asp-controller="Prescriptions" asp-action="Index">Prescriptions</a></li><li class="nav-item"><a class="nav-link @(currentController == "Medicines" ? "active" : "")" asp-controller="Medicines" asp-action="Index">Medicines</a></li><li class="nav-item"><a class="nav-link @(currentController == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Users">Users</a></li>}
+@if(User.IsInRole("Patient")){<li class="nav-item"><a class="nav-link @(currentController == "Appointments" ? "active" : "")" asp-controller="Appointments" asp-action="Index">My Appointments</a></li><li class="nav-item"><a class="nav-link @(currentController == "MedicalRecords" ? "active" : "")" asp-controller="MedicalRecords" asp-action="Index">My Medical Records</a></li><li class="nav-item"><a class="nav-link @(currentController == "LabTests" ? "active" : "")" asp-controller="LabTests" asp-action="Index">My Lab Results</a></li><li class="nav-item"><a class="nav-link @(currentController == "Prescriptions" ? "active" : "")" asp-controller="Prescriptions" asp-action="Index">My Prescriptions</a></li><li class="nav-item"><a class="nav-link @(currentController == "PatientPortal" && currentAction == "History" ? "active" : "")" asp-controller="PatientPortal" asp-action="History">My History</a></li><li class="nav-item"><a class="nav-link @(currentController == "PatientPortal" && currentAction == "Profile" ? "active" : "")" asp-controller="PatientPortal" asp-action="Profile">My Profile</a></li>}
+</ul>
+<div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 mt-2 mt-lg-0">
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><span class="theme-icon">☀️</span><span class="theme-label">Light</span></button>
+<span class="role-pill">@displayRole</span>
+<span class="navbar-text">@User.Identity?.Name</span>
+<form asp-controller="Account" asp-action="Logout" method="post" class="m-0"><button class="btn btn-outline-light btn-sm px-3">Logout</button></form>
+</div>
+}
+else
+{
+<div class="ms-auto d-flex align-items-center gap-2"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><span class="theme-icon">☀️</span><span class="theme-label">Light</span></button><a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">Login</a><a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Register">Register</a></div>
+}
+</div></div></nav>
+</header>
+<main class="container-fluid px-3 px-lg-4 py-4 page-shell">
+@if(TempData["Error"] is string error){<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Action not completed.</strong> @error<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>}
+@if(TempData["Message"] is string msg){<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success.</strong> @msg<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>}
+@RenderBody()
+</main>
+<footer class="site-footer">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="footer-simple">
+            <div class="footer-simple-brand">
+                <a class="footer-logo" asp-controller="Home" asp-action="Index">Medi<span>Sync</span></a>
+                <span>Healthcare Coordination &amp; Management System</span>
+            </div>
+            <nav class="footer-simple-links" aria-label="Footer navigation">
+                <a asp-controller="Home" asp-action="About">About Us</a>
+                <a asp-controller="Home" asp-action="About" asp-fragment="team">Our Team</a>
+                <a asp-controller="Home" asp-action="About" asp-fragment="technology">Technology</a>
+                <a asp-controller="Home" asp-action="About" asp-fragment="workflow">Workflow</a>
+            </nav>
+        </div>
+        <div class="footer-simple-bottom">
+            <span>© 2026 MediSync</span>
+            <span>Student project · Dharmsinh Desai University</span>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+ const root=document.documentElement;
+ const buttons=document.querySelectorAll('[data-theme-toggle]');
+ function sync(){
+   const dark=root.getAttribute('data-theme')==='dark';
+   buttons.forEach(b=>{const icon=b.querySelector('.theme-icon'); const label=b.querySelector('.theme-label'); if(icon) icon.textContent=dark?'🌙':'☀️'; if(label) label.textContent=dark?'Dark':'Light'; b.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');});
+ }
+ buttons.forEach(b=>b.addEventListener('click',()=>{const next=root.getAttribute('data-theme')==='dark'?'light':'dark'; root.setAttribute('data-theme',next); localStorage.setItem('medisync-theme',next); sync();}));
+ sync();
+})();
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

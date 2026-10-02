@@ -1,0 +1,61 @@
+@model IEnumerable<Appointment>
+@{ ViewData["Title"] = "Appointments"; }
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div><span class="eyebrow">SCHEDULING</span><h1 class="mb-1">Appointments</h1><p class="text-muted mb-0">Manage the Pending → Confirmed → Completed healthcare workflow.</p></div>
+    @if(User.IsInRole("Admin") || User.IsInRole("Receptionist") || User.IsInRole("Patient")) { <a class="btn btn-primary" asp-action="Create">Create Appointment</a> }
+</div>
+<div class="table-card">
+<table class="table table-hover align-middle mb-0">
+<thead><tr><th>Date &amp; Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+<tbody>
+@foreach(var a in Model)
+{
+    var badge = a.Status switch { AppointmentStatus.Pending => "bg-warning text-dark", AppointmentStatus.Confirmed => "bg-primary", AppointmentStatus.Completed => "bg-success", AppointmentStatus.Cancelled => "bg-secondary", AppointmentStatus.Rejected => "bg-danger", _ => "bg-secondary" };
+    <tr>
+        <td><strong>@a.AppointmentDate.ToString("dd MMM yyyy")</strong><br /><span class="text-muted small">@a.AppointmentDate.ToString("hh:mm tt")</span></td>
+        <td>@a.Patient.FullName</td>
+        <td>@a.Doctor.FullName<br /><span class="text-muted small">@a.Doctor.Specialization</span></td>
+        <td>@(string.IsNullOrWhiteSpace(a.Reason) ? "—" : a.Reason)</td>
+        <td><span class="badge @badge">@a.Status</span></td>
+        <td class="text-end">
+            @if(User.IsInRole("Doctor"))
+            {
+                @if(a.Status == AppointmentStatus.Pending)
+                {
+                    <div class="d-flex justify-content-end gap-1"><form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Confirmed"/><button class="btn btn-sm btn-outline-primary">Confirm</button></form><form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Rejected"/><button class="btn btn-sm btn-outline-danger">Reject</button></form></div>
+                }
+                else if(a.Status == AppointmentStatus.Confirmed)
+                {
+                    <div class="d-flex justify-content-end gap-1"><form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Completed"/><button class="btn btn-sm btn-success">Complete</button></form><form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Cancelled"/><button class="btn btn-sm btn-outline-secondary">Cancel</button></form></div>
+                }
+                else if(a.Status == AppointmentStatus.Completed && a.MedicalRecord is null)
+                {
+                    <a class="btn btn-sm btn-success" asp-controller="MedicalRecords" asp-action="Create" asp-route-appointmentId="@a.Id">Create Medical Record</a>
+                }
+                else if(a.Status == AppointmentStatus.Completed)
+                {
+                    <a class="btn btn-sm btn-outline-primary" asp-controller="MedicalRecords" asp-action="Index">View Records</a>
+                }
+            }
+            else if(User.IsInRole("Admin"))
+            {
+                <div class="d-flex justify-content-end gap-1">
+                    @if(a.Status == AppointmentStatus.Pending) { <form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Confirmed"/><button class="btn btn-sm btn-outline-primary">Confirm</button></form><form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Rejected"/><button class="btn btn-sm btn-outline-danger">Reject</button></form> }
+                    @if(a.Status == AppointmentStatus.Confirmed) { <form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Completed"/><button class="btn btn-sm btn-outline-success">Complete</button></form> }
+                    @if(a.Status == AppointmentStatus.Completed && a.MedicalRecord is null) { <a class="btn btn-sm btn-success" asp-controller="MedicalRecords" asp-action="Create" asp-route-appointmentId="@a.Id">Create Medical Record</a> }
+                    @if(a.Status is AppointmentStatus.Pending or AppointmentStatus.Confirmed) { <form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Cancelled"/><button class="btn btn-sm btn-outline-secondary">Cancel</button></form> }
+                </div>
+            }
+            else if(User.IsInRole("Receptionist") && (a.Status is AppointmentStatus.Pending or AppointmentStatus.Confirmed))
+            {
+                <form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Cancelled"/><button class="btn btn-sm btn-outline-secondary">Cancel</button></form>
+            }
+            else if(User.IsInRole("Patient") && (a.Status is AppointmentStatus.Pending or AppointmentStatus.Confirmed))
+            {
+                <form asp-action="ChangeStatus" method="post"><input type="hidden" name="id" value="@a.Id"/><input type="hidden" name="status" value="Cancelled"/><button class="btn btn-sm btn-outline-secondary">Cancel Appointment</button></form>
+            }
+        </td>
+    </tr>
+}
+@if(!Model.Any()) { <tr><td colspan="6" class="text-center text-muted py-5">No appointments found.</td></tr> }
+</tbody></table></div>

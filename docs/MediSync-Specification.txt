@@ -1,0 +1,927 @@
+MEDISYNC — COMPLETE PROJECT DESCRIPTION / DEVELOPMENT PROMPT
+I am developing a college project called MediSync, a Healthcare Coordination & Management System built using ASP.NET Core MVC, .NET 10, Entity Framework Core, SQL Server, and ASP.NET Core Identity.
+You are helping me develop this system into a complete, functional, secure, and professional healthcare management web application.
+The most important thing is to understand what MediSync is supposed to do as a complete system.
+Do not think of MediSync as just a collection of CRUD pages. It should behave like a small centralized healthcare coordination platform where different healthcare users interact with the same patient and healthcare data according to their roles.
+1. WHAT IS MEDISYNC?
+MediSync stands for a centralized healthcare coordination and management system.
+The purpose of the system is to connect different healthcare activities in one application:
+
+Patient
+   ↓
+Appointment
+   ↓
+Doctor Consultation
+   ↓
+Medical Record
+   ├── Lab Test
+   │      ↓
+   │   Laboratory
+   │      ↓
+   │   Lab Result
+   │
+   └── Prescription
+          ↓
+      Pharmacy
+          ↓
+       Medicine
+Instead of storing healthcare information in disconnected places, MediSync keeps the information connected.
+The system should allow authorized users to manage the complete patient journey:
+
+Patient Registration
+        ↓
+Appointment
+        ↓
+Doctor Consultation
+        ↓
+Medical Record
+        ↓
+Lab Tests / Results
+        ↓
+Prescription
+        ↓
+Pharmacy / Medicine
+        ↓
+Patient Medical History
+The application should provide different interfaces and permissions depending on whether the logged-in person is an:
+
+Admin
+Doctor
+Receptionist
+Laboratory Staff
+Pharmacist
+Patient
+2. MAIN OBJECTIVE
+The main objective of MediSync is:
+
+To provide a centralized role-based healthcare management system that manages patients, doctors, appointments, medical records, laboratory tests, prescriptions, and medicines while ensuring that each type of user can access only the information and operations relevant to their responsibilities.
+The application should be:
+
+Easy to understand
+Role-based
+Secure
+Database-driven
+Workflow-oriented
+Professional-looking
+Suitable for a college final project demonstration
+3. PROBLEM MEDISYNC SOLVES
+A traditional small healthcare environment may have patient information, appointments, prescriptions, laboratory information, and medicine information handled separately.
+This creates problems such as:
+
+Patient information duplication
+Difficulty tracking appointments
+Difficulty maintaining medical history
+Poor coordination between doctor and laboratory
+Difficulty tracking prescriptions
+Difficulty accessing previous records
+Unnecessary access to sensitive information
+MediSync solves this by maintaining a centralized system.
+For example:
+
+Doctor creates lab request
+        ↓
+Laboratory sees the request
+        ↓
+Laboratory enters result
+        ↓
+Doctor sees the result
+        ↓
+Patient can see the result
+Similarly:
+
+Doctor creates prescription
+        ↓
+Prescription contains medicines
+        ↓
+Pharmacist views prescription
+        ↓
+Pharmacist processes medicine
+4. TECHNOLOGY
+The system is intended to use:
+
+Frontend:
+Razor Views
+HTML
+CSS
+Bootstrap
+JavaScript where necessary
+
+Backend:
+ASP.NET Core MVC
+.NET 10
+C#
+
+Database:
+SQL Server / LocalDB
+Entity Framework Core
+
+Authentication:
+ASP.NET Core Identity
+
+Authorization:
+Role-based authorization
+The application should follow normal ASP.NET Core MVC architecture.
+5. USER ROLES
+MediSync has six main roles.
+
+1. Admin
+2. Doctor
+3. Receptionist
+4. Laboratory
+5. Pharmacist
+6. Patient
+Each role must have a different responsibility.
+A user should not automatically have access to every module.
+6. ADMIN
+The Admin is the system-level administrator.
+The Admin manages the operational and configuration side of MediSync.
+
+Admin responsibilities
+The Admin should be able to manage:
+
+Doctors
+Patients
+Receptionists
+Laboratory staff
+Pharmacists
+Medicines
+System data
+User/role-related management
+The Admin dashboard should provide an overview of the system.
+Example:
+
+ADMIN DASHBOARD
+
+Total Patients
+Total Doctors
+Today's Appointments
+Pending Appointments
+Pending Lab Tests
+Total Medicines
+Low Stock Medicines
+The Admin should have access to system-wide information, subject to reasonable security practices.
+7. DOCTOR
+The Doctor is responsible for patient consultation and medical care.
+The Doctor dashboard should focus on:
+
+Today's appointments
+Pending appointments
+Completed appointments
+Recent patients
+Medical records
+Pending laboratory tests/results
+Prescriptions
+Doctor capabilities
+The Doctor should be able to:
+
+View relevant appointments
+Confirm appointments
+Complete appointments
+View patient information
+View relevant patient history
+Create medical records
+Enter symptoms
+Enter diagnosis
+Enter doctor notes
+Enter follow-up instructions
+Request laboratory tests
+View laboratory results
+Create prescriptions
+Add medicines to prescriptions
+A Doctor should not manage system-wide users unless the Admin role gives that ability.
+8. RECEPTIONIST
+The Receptionist is responsible primarily for front-desk operations.
+The Receptionist should be able to:
+
+Register patients
+View patient information
+Update basic patient information
+Create appointments
+View appointment schedules
+Manage appointment-related information
+The Receptionist should not normally have access to private clinical functions such as:
+
+Creating medical diagnoses
+Creating medical records
+Creating prescriptions
+Entering laboratory results
+Managing medicine stock
+unless a clearly justified requirement exists.
+9. LABORATORY STAFF
+The Laboratory role is responsible for laboratory requests and results.
+The Laboratory dashboard should show:
+
+Pending Lab Tests
+Tests In Progress
+Completed Tests
+Recent Results
+Laboratory staff should be able to:
+
+View requested laboratory tests
+Accept/process tests
+Update test status
+Enter test results
+Add report notes
+Mark tests as completed
+Laboratory users should not create prescriptions or modify medical diagnoses.
+10. PHARMACIST
+The Pharmacist is responsible for prescriptions and medicine management.
+The Pharmacist dashboard should show:
+
+Pending Prescriptions
+Processed Prescriptions
+Medicine Count
+Low Stock Medicines
+The Pharmacist should be able to:
+
+View prescriptions
+View prescription items
+View medicines
+Manage medicine information
+Update medicine stock
+Process prescriptions
+The Pharmacist should not create medical diagnoses or laboratory reports.
+11. PATIENT
+The Patient is the end user of the healthcare system.
+The Patient dashboard should focus entirely on the patient's own healthcare information.
+The Patient should be able to:
+
+View profile
+Update permitted profile information
+Book appointment
+View own appointments
+View appointment status
+View own medical records
+View own laboratory results
+View own prescriptions
+View own medical history
+A Patient must never be allowed to view another patient's private information.
+For example, if a patient tries to manually change:
+
+Patient ID = 10
+to:
+
+Patient ID = 11
+they must not automatically gain access to Patient 11's records.
+Ownership checks are required in addition to hiding navigation links.
+12. AUTHENTICATION
+MediSync must use ASP.NET Core Identity.
+Users should be able to:
+
+Register
+Login
+Logout
+Manage account
+The system should support role assignment and role-based authorization.
+Authentication determines:
+
+Who is the user?
+Authorization determines:
+
+What is this user allowed to do?
+Both are required.
+13. ROLE-BASED AUTHORIZATION
+Authorization should be implemented at the actual controller/action level.
+Do not rely only on hiding links.
+For example:
+
+[Authorize(Roles = "Admin")]
+or:
+
+[Authorize(Roles = "Doctor,Admin")]
+where appropriate.
+A user should not be able to bypass restrictions by manually entering a URL.
+Example:
+
+/Medicines
+/MedicalRecords
+/Patients
+must still enforce permissions even if the navigation link is hidden.
+14. ROLE-BASED NAVIGATION
+The navigation bar/sidebar should change depending on the current role.
+
+Admin navigation
+For example:
+
+Dashboard
+Patients
+Doctors
+Appointments
+Medical Records
+Laboratory
+Prescriptions
+Medicines
+User Management
+Doctor navigation
+For example:
+
+Dashboard
+Appointments
+Patients
+Medical Records
+Laboratory
+Prescriptions
+Receptionist navigation
+For example:
+
+Dashboard
+Patients
+Appointments
+Laboratory navigation
+For example:
+
+Dashboard
+Laboratory Tests
+Results
+Pharmacist navigation
+For example:
+
+Dashboard
+Prescriptions
+Medicines
+Stock
+Patient navigation
+For example:
+
+Dashboard
+My Profile
+My Appointments
+My Medical Records
+My Lab Results
+My Prescriptions
+The exact implementation can be adjusted to the existing UI.
+15. PATIENT MANAGEMENT
+MediSync should maintain a complete patient profile.
+A patient record may contain information such as:
+
+Patient ID
+Name
+Date of Birth
+Gender
+Phone
+Email
+Address
+Emergency Contact
+Registration Date
+The exact fields should follow the existing model unless additional fields are genuinely required.
+Patient information should be connected to:
+
+Appointments
+Medical Records
+Lab Tests
+Prescriptions
+Application User
+16. DOCTOR MANAGEMENT
+Doctor information should include appropriate information such as:
+
+Doctor ID
+Name
+Specialization
+Phone
+Email
+Department
+Availability
+Again, use the existing model as the source of truth and do not duplicate data unnecessarily.
+Doctors should be connectable to:
+
+Appointments
+Medical Records
+Lab Tests
+Prescriptions
+ApplicationUser
+where appropriate.
+17. APPOINTMENT MANAGEMENT
+Appointments are one of the main workflows of MediSync.
+An appointment connects:
+
+Patient
+Doctor
+Date/Time
+Status
+Reason/details
+An appointment should have a controlled lifecycle.
+A typical lifecycle is:
+
+Pending
+   ↓
+Confirmed
+   ↓
+Completed
+Other statuses such as:
+
+Cancelled
+Rejected
+may be used if required by the existing model/design.
+18. APPOINTMENT WORKFLOW
+A typical appointment workflow should be:
+
+Patient / Receptionist
+        ↓
+Create Appointment
+        ↓
+Pending
+        ↓
+Doctor reviews appointment
+        ↓
+Confirmed
+        ↓
+Patient visits doctor
+        ↓
+Consultation completed
+        ↓
+Completed
+After completion:
+
+Appointment
+    ↓
+Medical Record
+The system should prevent inappropriate role actions.
+For example:
+
+Patient
+should not be able to act as a Doctor and mark a consultation as completed without authorization.
+19. MEDICAL RECORDS
+Medical records are the core clinical history of the patient.
+A medical record should be connected to:
+
+Patient
+Doctor
+Appointment
+and may contain:
+
+Visit Date
+Symptoms
+Diagnosis
+Doctor Notes
+Treatment information
+Follow-up instructions
+The purpose is to maintain the patient's clinical history.
+Example:
+
+Patient
+  ↓
+Appointment #12
+  ↓
+Medical Record
+  ├── Symptoms
+  ├── Diagnosis
+  ├── Doctor Notes
+  └── Follow-up
+Patients should be able to view their own records.
+Doctors should be able to view records relevant to their work.
+Unauthorized users should not be given unrestricted clinical access.
+20. LABORATORY SYSTEM
+The laboratory module should connect:
+
+Doctor
+Patient
+Appointment
+Medical Record
+Lab Test
+A Doctor can request a lab test.
+Example:
+
+Doctor
+   ↓
+Request CBC Test
+   ↓
+Lab Test created
+   ↓
+Laboratory receives request
+Laboratory staff then processes it:
+
+Requested
+   ↓
+In Progress
+   ↓
+Completed
+The Laboratory enters:
+
+Result
+Report Notes
+Completed Date
+Then:
+
+Doctor views result
+Patient views result
+depending on authorization.
+21. PRESCRIPTION SYSTEM
+A Doctor can create a prescription for a patient.
+A prescription is associated with:
+
+Patient
+Doctor
+Appointment / Medical Record
+Prescription Items
+A prescription can contain multiple medicines.
+Example:
+
+Prescription
+    │
+    ├── Medicine A
+    │      ├── Dosage
+    │      ├── Frequency
+    │      └── Duration
+    │
+    ├── Medicine B
+    │      ├── Dosage
+    │      ├── Frequency
+    │      └── Duration
+    │
+    └── Instructions
+The existing system already has:
+
+Prescription
+PrescriptionItem
+Medicine
+and these should remain connected.
+22. PHARMACY WORKFLOW
+After a Doctor creates a prescription:
+
+Doctor
+    ↓
+Prescription
+    ↓
+Prescription Items
+    ↓
+Pharmacist
+The Pharmacist should be able to:
+
+View prescription
+Check medicines
+Check stock
+Process prescription
+Update stock
+The system should ideally prevent dispensing more medicine than available stock.
+23. MEDICINE MANAGEMENT
+Medicine information may include:
+
+Medicine ID
+Medicine Name
+Manufacturer
+Category
+Description
+Quantity/Stock
+Expiry Date
+Price
+Use the actual existing model and extend only when necessary.
+Medicine stock should be manageable by authorized users, particularly:
+
+Admin
+Pharmacist
+24. PATIENT HISTORY
+The Patient should have a centralized history view.
+A useful patient history could show:
+
+Appointments
+Medical Records
+Lab Results
+Prescriptions
+Medicines
+For example:
+
+PATIENT HISTORY
+
+Appointment
+2026-09-30
+Dr. XYZ
+Completed
+
+Medical Record
+Diagnosis: ...
+
+Lab Test
+CBC
+Result: ...
+
+Prescription
+Paracetamol
+...
+The purpose is to make the patient's healthcare history easy to follow.
+25. DASHBOARDS
+The final system should have role-specific dashboards.
+
+Admin Dashboard
+System overview:
+
+Patients
+Doctors
+Appointments
+Laboratory Requests
+Medicines
+Pending Activities
+Doctor Dashboard
+Clinical work:
+
+Today's Appointments
+Pending Appointments
+Recent Patients
+Pending Lab Results
+Recent Prescriptions
+Receptionist Dashboard
+Front desk:
+
+Today's Appointments
+Upcoming Appointments
+Patient Registration
+Laboratory Dashboard
+Laboratory operations:
+
+Pending Tests
+Tests In Progress
+Completed Tests
+Pharmacist Dashboard
+Pharmacy operations:
+
+Pending Prescriptions
+Processed Prescriptions
+Medicine Stock
+Low Stock
+Patient Dashboard
+Personal healthcare:
+
+Next Appointment
+Appointments
+Medical Records
+Lab Results
+Prescriptions
+26. DATABASE RELATIONSHIP CONCEPT
+The conceptual data relationship should look approximately like:
+
+                  ApplicationUser
+                       │
+              ┌────────┴─────────┐
+              │                  │
+           Patient              Doctor
+              │                  │
+      ┌───────┼────────┐        │
+      │       │        │        │
+Appointments  │    Prescriptions│
+      │       │        │        │
+      │   Medical       │        │
+      │    Records      │        │
+      │       │         │        │
+      └───────┼─────────┘        │
+              │                  │
+           LabTests ◄────────────┘
+
+Prescription
+      │
+      ↓
+PrescriptionItem
+      │
+      ↓
+Medicine
+The exact foreign keys and navigation properties must follow the existing EF Core models.
+27. IMPORTANT BUSINESS RULES
+The system should follow rules such as:
+
+Authentication
+Only authenticated users should access protected functionality.
+
+Authorization
+Each role gets only its intended functionality.
+
+Patient privacy
+Patients can access their own healthcare data, not another patient's data.
+
+Doctor access
+Doctors can work with patients and clinical information relevant to their role.
+
+Laboratory access
+Laboratory users manage tests/results, not prescriptions.
+
+Pharmacist access
+Pharmacists manage medicines/prescriptions, not diagnoses.
+
+Receptionist access
+Receptionists handle administrative/front-desk operations, not clinical decision-making.
+
+Admin access
+Admins manage system-level operations.
+28. UI DESIGN DIRECTION
+MediSync should visually feel like a modern healthcare management application.
+The interface should use:
+
+Clean navigation
+Professional colors
+Clear cards
+Responsive tables
+Readable forms
+Validation messages
+Status badges
+Consistent buttons
+Clear page headings
+Avoid making it excessively complicated.
+The goal is:
+
+Professional
+Simple
+Easy to demonstrate
+Easy to understand
+29. IMPORTANT DESIGN PRINCIPLE
+MediSync should be a workflow-based system, not simply a CRUD application.
+For example, a weak implementation would be:
+
+Appointment CRUD
+Doctor CRUD
+Patient CRUD
+Medicine CRUD
+A proper MediSync implementation should be:
+
+Patient
+   ↓
+Appointment
+   ↓
+Doctor
+   ↓
+Medical Record
+   ├── Lab Test
+   │     ↓
+   │   Result
+   │
+   └── Prescription
+         ↓
+      Pharmacy
+The entities should interact meaningfully.
+30. EXPECTED FINAL DEMONSTRATION
+The completed system should allow a college project demonstration such as:
+
+Scenario 1 — Receptionist
+Login as Receptionist
+      ↓
+Register patient
+      ↓
+Create appointment
+      ↓
+Appointment becomes Pending
+Scenario 2 — Doctor
+Login as Doctor
+      ↓
+See appointment
+      ↓
+Confirm appointment
+      ↓
+Complete consultation
+      ↓
+Create medical record
+      ↓
+Request lab test
+      ↓
+Create prescription
+Scenario 3 — Laboratory
+Login as Laboratory Staff
+      ↓
+See pending test
+      ↓
+Process test
+      ↓
+Enter result
+      ↓
+Complete test
+Scenario 4 — Pharmacist
+Login as Pharmacist
+      ↓
+See prescription
+      ↓
+View medicines
+      ↓
+Process prescription
+      ↓
+Update medicine stock
+Scenario 5 — Patient
+Login as Patient
+      ↓
+See dashboard
+      ↓
+View appointment
+      ↓
+View medical record
+      ↓
+View lab result
+      ↓
+View prescription
+      ↓
+View medical history
+Scenario 6 — Admin
+Login as Admin
+      ↓
+View system dashboard
+      ↓
+Manage users/data
+      ↓
+Manage doctors/patients
+      ↓
+Manage medicines
+      ↓
+View system information
+31. WHAT MEDISYNC SHOULD NOT BECOME
+Do not unnecessarily turn MediSync into:
+
+An online pharmacy
+A billing/accounting system
+An insurance platform
+A telemedicine/video-call application
+A complex AI diagnostic system
+A social network
+A generic hospital ERP with hundreds of unrelated modules
+The core focus is:
+
+Patients
+Doctors
+Appointments
+Medical Records
+Laboratory
+Prescriptions
+Medicines
+Role-based healthcare coordination
+These are the central features.
+32. AI/DEVELOPER EXPECTATION
+When developing MediSync, think in this order:
+
+User
+ ↓
+Role
+ ↓
+Permission
+ ↓
+Dashboard
+ ↓
+Workflow
+ ↓
+Database
+ ↓
+Related modules
+Do not implement features in isolation.
+Every feature should answer:
+
+Who uses this?
+What are they allowed to do?
+What data does it affect?
+What happens next in the healthcare workflow?
+33. FINAL VISION OF MEDISYNC
+The final MediSync application should feel like this:
+
+                    MEDISYNC
+        Healthcare Coordination System
+                         │
+          ┌──────────────┼──────────────┐
+          │              │              │
+        Admin          Staff          Patient
+                         │
+         ┌───────────────┼───────────────┐
+         │               │               │
+     Receptionist      Doctor       Laboratory
+                                         │
+                                  Pharmacist
+         │               │               │
+         └───────────────┼───────────────┘
+                         │
+                  Shared Healthcare Data
+                         │
+      ┌──────────────────┼──────────────────┐
+      │                  │                  │
+   Patients          Appointments      Medical Records
+      │                  │                  │
+      └──────────────────┼──────────────────┘
+                         │
+                 Lab Tests / Results
+                         │
+                   Prescriptions
+                         │
+                     Medicines
+The goal is for MediSync to provide one connected healthcare workflow instead of independent CRUD pages.
+34. FINAL DEVELOPMENT GOAL
+Build MediSync into a complete:
+Role-Based Healthcare Coordination & Management System
+with:
+
+✅ Authentication
+✅ Registration/Login/Logout
+✅ Role-based authorization
+✅ Admin
+✅ Doctor
+✅ Receptionist
+✅ Laboratory
+✅ Pharmacist
+✅ Patient
+✅ Patient management
+✅ Doctor management
+✅ Appointment management
+✅ Appointment workflow
+✅ Medical records
+✅ Laboratory requests
+✅ Laboratory results
+✅ Prescription management
+✅ Prescription items
+✅ Medicine management
+✅ Pharmacy workflow
+✅ Patient history
+✅ Role-specific dashboards
+✅ Role-specific navigation
+✅ Patient data ownership/security
+✅ Validation
+✅ Professional UI
+✅ Complete end-to-end healthcare workflow
+The final application should be functional, coherent, secure, understandable, and suitable for a college project demonstration.
+Use the existing project structure and code as the implementation foundation. The goal is not to create a new MediSync from scratch, but to evolve the existing application into this complete healthcare management system while preserving working functionality.

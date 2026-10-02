@@ -1,0 +1,4 @@
+@model DoctorManagementViewModel
+@{ ViewData["Title"] = "Edit Doctor"; }
+<div class="mb-4"><span class="eyebrow">ADMIN · CLINICAL STAFF</span><h1>Edit Doctor</h1><p class="text-muted">Update profile information and keep the linked login account synchronized.</p></div>
+<form asp-action="Edit" method="post" class="form-card">@await Html.PartialAsync("_DoctorForm")<div class="mt-4 d-flex gap-2"><button class="btn btn-primary">Save Changes</button><a class="btn btn-light" asp-action="Index">Cancel</a></div></form>

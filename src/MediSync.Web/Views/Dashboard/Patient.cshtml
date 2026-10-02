@@ -1,0 +1,43 @@
+@model DashboardViewModel
+@{ ViewData["Title"] = "Patient Dashboard"; }
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div><span class="eyebrow">MY HEALTHCARE</span><h1 class="mb-1">Welcome, @Model.MyName</h1><p class="text-muted mb-0">Your personal healthcare information, appointments and records in one place.</p></div>
+    <div class="d-flex gap-2"><a class="btn btn-primary" asp-controller="Appointments" asp-action="Create">Book Appointment</a><a class="btn btn-outline-primary" asp-controller="PatientPortal" asp-action="Profile">My Profile</a></div>
+</div>
+
+<div class="form-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><div class="section-label">Next Appointment</div><h4 class="mt-2 mb-0">@Model.NextAppointment</h4></div><a class="btn btn-sm btn-outline-primary" asp-controller="Appointments" asp-action="Index">View Appointments</a></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Appointments</div><div class="stat-value">@Model.MyAppointments</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Medical Records</div><div class="stat-value">@Model.MyMedicalRecords</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Lab Results</div><div class="stat-value">@Model.MyLabResults</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="stat-label">Prescriptions</div><div class="stat-value">@Model.MyPrescriptions</div></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7"><div class="form-card h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3"><div><div class="section-label">Personal Profile</div><h3 class="mb-0 mt-1">Your Information</h3></div><a class="btn btn-sm btn-outline-primary" asp-controller="PatientPortal" asp-action="Profile">Edit permitted details</a></div>
+        <div class="row g-3">
+            <div class="col-sm-6"><div class="profile-field"><span>Name</span><strong>@Model.MyName</strong></div></div>
+            <div class="col-sm-6"><div class="profile-field"><span>Date of Birth</span><strong>@(Model.MyDateOfBirth?.ToString("dd MMM yyyy") ?? "—")</strong></div></div>
+            <div class="col-sm-6"><div class="profile-field"><span>Gender</span><strong>@(string.IsNullOrWhiteSpace(Model.MyGender) ? "—" : Model.MyGender)</strong></div></div>
+            <div class="col-sm-6"><div class="profile-field"><span>Phone</span><strong>@(string.IsNullOrWhiteSpace(Model.MyPhone) ? "—" : Model.MyPhone)</strong></div></div>
+            <div class="col-sm-6"><div class="profile-field"><span>Email</span><strong>@(string.IsNullOrWhiteSpace(Model.MyEmail) ? "—" : Model.MyEmail)</strong></div></div>
+            <div class="col-sm-6"><div class="profile-field"><span>Emergency Contact</span><strong>@(string.IsNullOrWhiteSpace(Model.MyEmergencyContact) ? "—" : Model.MyEmergencyContact)</strong></div></div>
+            <div class="col-12"><div class="profile-field"><span>Address</span><strong>@(string.IsNullOrWhiteSpace(Model.MyAddress) ? "—" : Model.MyAddress)</strong></div></div>
+            <div class="col-12"><div class="small text-muted">Registered on @(Model.MyRegistrationDate?.ToString("dd MMM yyyy") ?? "—")</div></div>
+        </div>
+    </div></div>
+    <div class="col-lg-5"><div class="form-card h-100">
+        <div class="section-label">Your Healthcare</div><h3 class="mt-1">Quick Access</h3>
+        <div class="d-grid gap-2 mt-3">
+            <a class="quick-link" asp-controller="Appointments" asp-action="Index"><span>My Appointments</span><span>→</span></a>
+            <a class="quick-link" asp-controller="MedicalRecords" asp-action="Index"><span>My Medical Records</span><span>→</span></a>
+            <a class="quick-link" asp-controller="LabTests" asp-action="Index"><span>My Lab Results</span><span>→</span></a>
+            <a class="quick-link" asp-controller="Prescriptions" asp-action="Index"><span>My Prescriptions</span><span>→</span></a>
+            <a class="quick-link" asp-controller="PatientPortal" asp-action="History"><span>Complete Medical History</span><span>→</span></a>
+        </div>
+    </div></div>
+</div>

@@ -1,0 +1,63 @@
+@model PrescriptionCreateViewModel
+@{ ViewData["Title"] = "Create Prescription"; }
+<h1>Create Prescription</h1>
+<form asp-action="Create" method="post" class="form-card" id="prescriptionForm">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        @if (Model.IsMedicalRecordLocked)
+        {
+            var selectedPatient = Model.Patients.FirstOrDefault(x => x.Value == Model.PatientId.ToString())?.Text ?? "Selected patient";
+            var selectedDoctor = Model.Doctors.FirstOrDefault(x => x.Value == Model.DoctorId.ToString())?.Text ?? "Selected doctor";
+            var selectedRecord = Model.MedicalRecords.FirstOrDefault(x => x.Value == Model.MedicalRecordId?.ToString())?.Text ?? $"Record #{Model.MedicalRecordId}";
+            <div class="col-md-4 mb-3"><label class="form-label">Patient</label><input class="form-control" value="@selectedPatient" readonly /><input type="hidden" asp-for="PatientId" /></div>
+            <div class="col-md-4 mb-3"><label class="form-label">Doctor</label><input class="form-control" value="@selectedDoctor" readonly /><input type="hidden" asp-for="DoctorId" /></div>
+            <div class="col-md-4 mb-3"><label class="form-label">Medical Record</label><input class="form-control" value="@selectedRecord" readonly /><input type="hidden" asp-for="MedicalRecordId" /></div>
+            <div class="col-12"><div class="alert alert-info py-2 mb-2">This prescription is linked to the selected medical record. Patient, doctor and medical record cannot be changed.</div></div>
+        }
+        else
+        {
+            <div class="col-md-4 mb-3"><label asp-for="PatientId" class="form-label">Patient</label><select asp-for="PatientId" asp-items="Model.Patients" class="form-select"><option value="">Select</option></select></div>
+            <div class="col-md-4 mb-3"><label asp-for="DoctorId" class="form-label">Doctor</label><select asp-for="DoctorId" asp-items="Model.Doctors" class="form-select"><option value="">Select</option></select></div>
+            <div class="col-md-4 mb-3"><label asp-for="MedicalRecordId" class="form-label">Medical Record</label><select asp-for="MedicalRecordId" asp-items="Model.MedicalRecords" class="form-select"><option value="">Optional</option></select></div>
+        }
+    </div>
+
+    <div class="mb-3"><label asp-for="MedicineId" class="form-label">Medicine</label><select asp-for="MedicineId" asp-items="Model.Medicines" class="form-select"><option value="">Select medicine</option></select></div>
+    <div class="row">
+        <div class="col-md-3 mb-3"><label asp-for="Dosage" class="form-label">Dosage</label><input asp-for="Dosage" class="form-control" placeholder="e.g. 1 tablet" /><span asp-validation-for="Dosage" class="text-danger"></span></div>
+        <div class="col-md-3 mb-3"><label asp-for="Frequency" class="form-label">Frequency</label><select asp-for="Frequency" class="form-select">
+            <option value="Once daily">Once daily</option><option value="Twice daily">Twice daily</option><option value="Three times daily">Three times daily</option><option value="Four times daily">Four times daily</option><option value="Every 4 hours">Every 4 hours</option><option value="Every 6 hours">Every 6 hours</option><option value="Every 8 hours">Every 8 hours</option><option value="Every 12 hours">Every 12 hours</option><option value="Every 24 hours">Every 24 hours</option>
+        </select></div>
+        <div class="col-md-3 mb-3"><label asp-for="Duration" class="form-label">Duration</label><select asp-for="Duration" class="form-select">
+            <option value="1 day">1 day</option><option value="3 days">3 days</option><option value="5 days">5 days</option><option value="7 days">7 days</option><option value="10 days">10 days</option><option value="14 days">14 days</option><option value="21 days">21 days</option><option value="30 days">30 days</option><option value="1 week">1 week</option><option value="2 weeks">2 weeks</option><option value="1 month">1 month</option><option value="2 months">2 months</option><option value="3 months">3 months</option>
+        </select></div>
+        <div class="col-md-3 mb-3"><label asp-for="Quantity" class="form-label">Calculated Quantity</label><input asp-for="Quantity" class="form-control" readonly /><span asp-validation-for="Quantity" class="text-danger"></span><small class="text-muted">Automatically calculated from dosage × frequency × duration.</small></div>
+    </div>
+    <div class="mb-3"><label asp-for="Instructions" class="form-label"></label><textarea asp-for="Instructions" class="form-control"></textarea></div>
+    <button class="btn btn-primary">Create Prescription</button>
+</form>
+@section Scripts {
+<script>
+(function () {
+    const dosage = document.getElementById('Dosage');
+    const frequency = document.getElementById('Frequency');
+    const duration = document.getElementById('Duration');
+    const quantity = document.getElementById('Quantity');
+    function updateQuantity() {
+        const m = (dosage.value || '').trim().match(/^(\d+(?:\.\d+)?)/);
+        const dose = m ? parseFloat(m[1]) : 0;
+        const perDay = {'Once daily':1,'Twice daily':2,'Three times daily':3,'Four times daily':4,'Every 4 hours':6,'Every 6 hours':4,'Every 8 hours':3,'Every 12 hours':2,'Every 24 hours':1}[frequency.value] || 0;
+        const dm = (duration.value || '').match(/^(\d+)\s*(day|days|week|weeks|month|months)$/i);
+        if (!dose || !perDay || !dm) { quantity.value = ''; return; }
+        const n = parseInt(dm[1], 10);
+        const unit = dm[2].toLowerCase();
+        const days = unit.startsWith('week') ? n * 7 : unit.startsWith('month') ? n * 30 : n;
+        const total = dose * perDay * days;
+        quantity.value = Number.isInteger(total) && total > 0 ? total : '';
+    }
+    [dosage, frequency, duration].forEach(x => x && x.addEventListener('input', updateQuantity));
+    [frequency, duration].forEach(x => x && x.addEventListener('change', updateQuantity));
+    updateQuantity();
+})();
+</script>
+}

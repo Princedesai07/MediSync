@@ -1,0 +1,10 @@
+@model IEnumerable<LabTest>
+@{ ViewData["Title"] = "Laboratory"; }
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h1>Laboratory</h1><p class="text-muted">Doctor → Laboratory → Result.</p></div>@if(User.IsInRole("Admin")||User.IsInRole("Doctor")){<a class="btn btn-primary" asp-action="Create">Request Test</a>}</div>
+<div class="table-card"><table class="table align-middle mb-0"><thead><tr><th>Requested</th><th>Patient</th><th>Test</th><th>Doctor</th><th>Status</th><th>Result / Action</th></tr></thead><tbody>
+@foreach(var l in Model){<tr><td>@l.RequestedDate.ToString("dd MMM yyyy")</td><td>@l.Patient.FullName</td><td><strong>@l.TestName</strong>@if(!string.IsNullOrWhiteSpace(l.Notes)){<div class="small text-muted">@l.Notes</div>}</td><td>@l.Doctor.FullName</td><td><span class="badge bg-@(l.Status == LabTestStatus.Completed ? "success" : l.Status == LabTestStatus.InProgress ? "warning text-dark" : "secondary")">@l.Status</span></td><td>
+@if(User.IsInRole("Laboratory")||User.IsInRole("Admin")){
+<form asp-action="UpdateStatus" method="post" class="row g-1"><input type="hidden" name="id" value="@l.Id"/><div class="col-5"><select name="status" class="form-select form-select-sm"><option value="Requested" selected="@(l.Status == LabTestStatus.Requested)">Requested</option><option value="InProgress" selected="@(l.Status == LabTestStatus.InProgress)">In Progress</option><option value="Completed" selected="@(l.Status == LabTestStatus.Completed)">Completed</option><option value="Cancelled" selected="@(l.Status == LabTestStatus.Cancelled)">Cancelled</option></select></div><div class="col-7"><input name="result" class="form-control form-control-sm" value="@l.Result" placeholder="Result" /></div><div class="col-12"><input name="reportNotes" class="form-control form-control-sm" value="@l.ReportNotes" placeholder="Report notes" /></div><div class="col-12"><button class="btn btn-sm btn-outline-primary">Save</button></div></form>
+} else {@(l.Result ?? "Pending")@if(!string.IsNullOrWhiteSpace(l.ReportNotes)){<div class="small text-muted mt-1">@l.ReportNotes</div>}}
+</td></tr>}
+</tbody></table></div>
