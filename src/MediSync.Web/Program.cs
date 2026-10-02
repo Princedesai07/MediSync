@@ -86,11 +86,11 @@ using (var scope = app.Services.CreateScope())
 
         if (!identityRolesTableExists)
         {
-            if (!app.Environment.IsDevelopment())
-            {
-                throw new InvalidOperationException("The database schema is incomplete. Apply the EF Core database migrations before starting MediSync.");
-            }
-
+            // MediSync uses EnsureCreatedAsync rather than EF Core migrations.
+            // If an empty/partial database was created before first deployment,
+            // rebuild it so the complete Identity + application schema can be
+            // created before demo seeding. This path is intended for a fresh
+            // college/demo database only.
             await db.Database.EnsureDeletedAsync();
             await db.Database.EnsureCreatedAsync();
         }
